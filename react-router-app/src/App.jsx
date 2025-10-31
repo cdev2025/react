@@ -9,6 +9,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AsyncLab from "./async-examples/AsyncLab";
 import ApiDemo from "./pages/ApiDemo";
+import PostDetail from "./api-examples/PostDetail";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -22,13 +23,12 @@ function App() {
         <Route path="products" element={<Products />} />
         <Route path="products/:id" element={<ProductDetail />} />
         <Route path="contact" element={<Contact />} />
-
         {/* 비동기 실습 페이지 */}
         <Route path="async" element={<AsyncLab />} />
-
         {/* Axios 실습 */}
         <Route path="api-demo" element={<ApiDemo />} />
-
+        {/*  http://localhost:5173/posts/2 */}
+        <Route path="posts/:id" element={<PostDetail />} /> {/* 게시글 상세*/}
         {/* 404 처리 : 모든 미매칭 경로 잡음 (반드시 마지막에 위치) */}
         <Route path="*" element={<NotFound />} />
       </Route>
