@@ -1,5 +1,7 @@
 import React from "react";
 import PromiseBasics from "./PromiseBasics";
+import AsyncAwaitBasics from "./AsyncAwaitBasics";
+import ApiPatterns from "./ApiPatterns";
 
 function AsyncLab() {
   return (
@@ -8,6 +10,8 @@ function AsyncLab() {
       <p>Promise ▶️ async/await ▶️ fetch API 순서로 학습해보세요!</p>
 
       <PromiseBasics />
+      <AsyncAwaitBasics />
+      <ApiPatterns />
     </div>
   );
 }

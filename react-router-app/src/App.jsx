@@ -8,6 +8,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AsyncLab from "./async-examples/AsyncLab";
+import ApiDemo from "./pages/ApiDemo";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,6 +25,9 @@ function App() {
 
         {/* 비동기 실습 페이지 */}
         <Route path="async" element={<AsyncLab />} />
+
+        {/* Axios 실습 */}
+        <Route path="api-demo" element={<ApiDemo />} />
 
         {/* 404 처리 : 모든 미매칭 경로 잡음 (반드시 마지막에 위치) */}
         <Route path="*" element={<NotFound />} />

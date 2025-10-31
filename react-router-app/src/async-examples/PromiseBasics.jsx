@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function PromiseBasics() {
   const [result, setResult] = useState([]);
@@ -9,6 +9,30 @@ function PromiseBasics() {
     setResult((prev) => [...prev, line]);
     console.log(line); // 콘솔에서 확인
   };
+
+  useEffect(() => {
+    log("Promise 실습 시작");
+
+    // Promise 생성 : resolve/reject
+    const basic = new Promise((resolve, reject) => {
+      log("Pending 상태...");
+      setTimeout(() => {
+        Math.random() > 0.3
+          ? resolve("✅ 성공 : 데이터 수신")
+          : reject(new Error("❌ 실패 : 네트워크 오류"));
+      }, 3000);
+    });
+
+    // then/catch/finally 체이닝
+    basic
+      .then((msg) => {
+        log(msg);
+        return "체이닝 값";
+      })
+      .then((val) => log(`다음 then: ${val}`))
+      .catch((err) => log(err.message))
+      .finally(() => log("===완료==="));
+  }, []);
 
   const manualTest = () => {
     log("수동 테스트");
