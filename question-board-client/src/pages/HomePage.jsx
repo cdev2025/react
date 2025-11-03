@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import BoardList from "../components/BoardList";
+import PostList from "../components/PostList";
+import { Box, Typography } from "@mui/material";
 
 function HomePage() {
   const [selectedBoard, setSelectedBoard] = useState(null);
@@ -11,19 +14,22 @@ function HomePage() {
   };
 
   return (
-    <div>
-      <h1>익명 질문 게시판</h1>
+    <Box>
       <BoardList onSelectBoard={handleSelectBoard} />
-      <hr />
+
       {selectedBoard ? (
-        <>
-          <h3>선택된 게시판: {selectedBoardName}</h3>
+        <Box>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            선택된 게시판: {selectedBoardName}
+          </Typography>
           <PostList boardId={selectedBoard} />
-        </>
+        </Box>
       ) : (
-        <p>목록에서 게시판을 선택해 주세요.</p>
+        <Typography color="text.secondary">
+          목록에서 게시판을 선택해 주세요.
+        </Typography>
       )}
-    </div>
+    </Box>
   );
 }
 

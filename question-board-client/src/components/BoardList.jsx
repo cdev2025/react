@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ApiService from "../api/ApiService";
+import { Box, Chip, CircularProgress, Stack, Typography } from "@mui/material";
 
 function BoardList({ onSelectBoard }) {
   const [boards, setBoards] = useState([]); // 데이터
@@ -10,6 +11,7 @@ function BoardList({ onSelectBoard }) {
     const fetchBoards = async () => {
       try {
         setLoading(true);
+        setError(null);
         const res = await ApiService.get("/boards");
         setBoards(res.data);
       } catch (err) {
@@ -23,34 +25,42 @@ function BoardList({ onSelectBoard }) {
     fetchBoards();
   }, []); // []비어있는 의존성 배열: 마운트될 때 한 번만 실행
 
-  if (loading) return <p>게시판 목록 불러오는 중....</p>;
-  if (error) return <p style={{ color: "red" }}>❌ {error}</p>;
+  if (loading)
+    return (
+      <Box sx={{ textAlign: "center", py: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  // severity 옵션 : error / warning / info / success
+  if (error) return <Alert serverity="error">{error}</Alert>;
 
   return (
-    <div>
-      <h2>게시판 목록</h2>
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        게시판 목록
+      </Typography>
       {boards.length === 0 ? (
-        <p>등록된 게시판이 없습니다.</p>
+        <Typography color="text.secondary">
+          등록된 게시판이 없습니다.
+        </Typography>
       ) : (
-        <ul
-          style={{
-            display: "flex",
-            listStyle: "none",
-            padding: 0,
-            gap: "20px",
-          }}
-        >
+        <Stack direction="row" spacing={1} flexWrap="wrap">
           {boards.map((board) => (
-            <li
+            <Chip
               key={board.id}
+              label={board.boardName}
               onClick={() => onSelectBoard(board.id, board.boardName)}
-            >
-              {board.boardName} |
-            </li>
+              color="primary"
+              variant="outlined"
+              sx={{ cursor: "pointer " }}
+            />
+            // Chip은 짧은 정보나 상태, 카테고리, 선택된 항목 등을
+            // 한 눈에 보기 쉽게 표시하는 작은 UI요소
           ))}
-        </ul>
+        </Stack>
       )}
-    </div>
+    </Box>
   );
 }
 

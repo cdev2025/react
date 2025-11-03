@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ApiService from "../api/ApiService";
+import {
+  Box,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 
 function PostList({ boardId }) {
   const [posts, setPosts] = useState([]); // 데이터
@@ -26,24 +35,51 @@ function PostList({ boardId }) {
     fetchPosts();
   }, [boardId]); // boardId가 변경될 때마다 실행
 
-  if (loading) return <p>게시판 목록 불러오는 중....</p>;
-  if (error) return <p style={{ color: "red" }}>❌ {error}</p>;
+  if (loading)
+    return (
+      <Box sx={{ textAlign: "center", py: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  // severity 옵션 : error / warning / info / success
+  if (error) return <Alert serverity="error">{error}</Alert>;
 
   return (
-    <div>
-      <h3>게시글 목록</h3>
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        게시글 목록
+      </Typography>
       {posts.length === 0 ? (
-        <p>등록된 게시글이 없습니다.</p>
+        <Typography color="text.secondary">
+          등록된 게시글이 없습니다.
+        </Typography>
       ) : (
-        <ul>
+        <List>
           {posts.map((post) => (
-            <li key={post.id}>
-              <strong>{post.title}</strong> - {post.userName}
-            </li>
+            <ListItem
+              key={post.id}
+              component={Link}
+              to={`/posts/${post.id}`}
+              sx={{
+                border: "1px solid #e0e0e0",
+                borderRadius: 1,
+                mb: 1,
+                textDecoration: "none",
+                color: "inherit",
+                "&:hover": { bgcolor: "action.hover" },
+              }}
+            >
+              {/* <strong>{post.title}</strong> - {post.userName} */}
+              <ListItemText
+                primary={post.title}
+                secondary={`작성자: ${post.userName}`}
+              />
+            </ListItem>
           ))}
-        </ul>
+        </List>
       )}
-    </div>
+    </Box>
   );
 }
 
