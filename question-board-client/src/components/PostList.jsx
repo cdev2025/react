@@ -73,7 +73,7 @@ function PostList({ boardId, refreshTrigger }) {
             >
               {/* <strong>{post.title}</strong> - {post.userName} */}
               <ListItemText
-                primary={post.title}
+                primary={`${post.title} [상태: ${post.statusDescription}]`}
                 secondary={`작성자: ${post.userName}`}
               />
             </ListItem>
