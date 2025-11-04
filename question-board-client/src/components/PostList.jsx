@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-function PostList({ boardId }) {
+function PostList({ boardId, refreshTrigger }) {
+  // refreshTrigger prop 추가
   const [posts, setPosts] = useState([]); // 데이터
   const [loading, setLoading] = useState(true); // 로딩상태
   const [error, setError] = useState(null); // 에러 상태
@@ -33,7 +34,7 @@ function PostList({ boardId }) {
     };
 
     fetchPosts();
-  }, [boardId]); // boardId가 변경될 때마다 실행
+  }, [boardId, refreshTrigger]); // boardId와 refreshTrigger가 변경될 때마다 실행
 
   if (loading)
     return (
