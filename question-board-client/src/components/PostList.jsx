@@ -9,9 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-function PostList({ boardId, refreshTrigger }) {
-  // refreshTrigger prop 추가
+function PostList() {
+  const { selectedBoardId: boardId, refreshKey: refreshTrigger } = useSelector(
+    (state) => state.board
+  );
+
   const [posts, setPosts] = useState([]); // 데이터
   const [loading, setLoading] = useState(true); // 로딩상태
   const [error, setError] = useState(null); // 에러 상태

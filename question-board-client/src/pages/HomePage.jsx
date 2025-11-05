@@ -1,33 +1,36 @@
 import React, { useState } from "react";
 import BoardList from "../components/BoardList";
 import PostList from "../components/PostList";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import { AddCircleOutline } from "@mui/icons-material";
 import PostForm from "../components/PostForm";
+import { useDispatch, useSelector } from "react-redux";
+import { bumpRefresh } from "../store/boardSlice";
 
 function HomePage() {
-  const [selectedBoard, setSelectedBoard] = useState(null);
-  const [selectedBoardName, setSelectedBoardName] = useState("");
+  const dispatch = useDispatch();
+
+  // Redux에서 게시판 상태 구독(로컬 상태 완전 제거)
+  const { selectedBoardId, selectedBoardName } = useSelector(
+    (state) => state.board
+  );
+
   const [postFormOpen, setPostFormOpen] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // 목록 새로고침 트리거
 
-  // BoardList에서 ID + 이름 같이 전달 받기
-  const handleSelectBoard = (id, name) => {
-    setSelectedBoard(id);
-    setSelectedBoardName(name);
-  };
-
-  // 게시글 작성 완료 후 목록 새로 고침할 함수 (모달창으로 전달할 함수)
+  // 게시글 작성 완료 후 목록 새로 고침할 함수
   const handlePostCreated = (newPost) => {
     console.log("새 게시글 등록: ", newPost);
-    setRefreshTrigger((prev) => prev + 1); // 트리거 값 변경해서 PostList 새로 고침
+    dispatch(bumpRefresh()); // Redux 액션으로 목록 새로고침
   };
 
   return (
     <Box>
-      <BoardList onSelectBoard={handleSelectBoard} />
+      <BoardList />
 
-      {selectedBoard ? (
+      <Divider sx={{ my: 3 }} />
+
+      {/* Redux 상태로 조건부 렌더링 */}
+      {selectedBoardId ? (
         <Box>
           <Typography variant="h6" sx={{ mb: 2 }}>
             선택된 게시판: {selectedBoardName}
@@ -40,13 +43,14 @@ function HomePage() {
             글쓰기
           </Button>
 
-          <PostList boardId={selectedBoard} refreshTrigger={refreshTrigger} />
+          {/* PostList도 boardId prop 없이 Redux 직접 구독 */}
+          <PostList />
 
-          {/* 게시글 작성 모달 */}
+          {/* 게시글 작성 모달 => boardID prop 전달 그대로 둠. 나중에 변경해보세요.*/}
           <PostForm
             open={postFormOpen}
             onClose={() => setPostFormOpen(false)}
-            boardId={selectedBoard}
+            boardId={selectedBoardId}
             onPostCreated={handlePostCreated}
           />
         </Box>

@@ -17,10 +17,15 @@ import {
 } from "@mui/material";
 import { ArrowBack, Delete, Edit } from "@mui/icons-material";
 import PasswordDialog from "./PasswordDialog";
+import EditPostDialog from "./EditPostDialog";
+import { useDispatch } from "react-redux";
+import { bumpRefresh } from "../store/boardSlice";
 
 function PostDetail() {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Redux 액션사용을 위해 dispatch준비
+
   const [post, setPost] = useState(null); // postId에 해당하는 특정 게시글 데이터
   const [replies, setReplies] = useState([]); // 댓글 데이터
   const [loading, setLoading] = useState(true); // 로딩상태
@@ -34,6 +39,11 @@ function PostDetail() {
     error: null,
   });
 
+  // 게시글 수정 모달 상태 관리
+  const [editModalOpen, setEditModalOpen] = useState(false); // 수정 모달 열림 여부
+  const [verifiedPassword, setVerifiedPassword] = useState(""); // 검증된 비밀번호 저장용 상태
+
+  // 게시글/댓글 조회
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -77,6 +87,26 @@ function PostDetail() {
     });
   };
 
+  // 수정 시 비밀번호 검증 함수
+  // 실제 서버 put api를 이용해 비밀번호가 맞는지 검증 수행함
+  const verifyPasswordForEdit = async (password) => {
+    try {
+      const verifyData = {
+        userName: post.userName,
+        email: post.email,
+        password: password, // 사용자가 입력한 비밀번호
+        title: post.title, // 기존 제목 (변경 없음)
+        content: post.content, // 기존 내용 (변경 없음)
+      };
+
+      // 서버에 PUT 요청 -> 비밀번호가 맞으면 200 OK 반환
+      await ApiService.put(`/posts/${post.id}`, verifyData);
+      return true; //검증 성공
+    } catch (err) {
+      throw err; //검증 실패 -> 상위 try/catch로 던짐
+    }
+  };
+
   //비밀 번호 확인 처리
   const handlePasswordConfirm = async (password) => {
     const { type } = passwordDialog;
@@ -86,9 +116,19 @@ function PostDetail() {
     try {
       if (type === "edit") {
         // 수정 로직 (현재 비밀번호 검증)
-        console.log("수정 요청 - 비밀번호 :", password);
-        // TODO: 실제 수정 폼 모달 열기 또는 수정 페이지로 이동
-        alert("수정 기능은 내일 구현됩니다.");
+        console.log("비밀번호 검증 중... :  비밀번호 :", password);
+        await verifyPasswordForEdit(password); // 검증시도
+
+        // 검증 성공시
+        setVerifiedPassword(password); // 이후 수정 시 재사용할 비밀번호 저장
+        setPasswordDialog({
+          open: false,
+          type: null,
+          loading: false,
+          error: null,
+        }); // 비밀번호 모달 닫기
+        setEditModalOpen(true); // 수정 모달 열기
+        console.log("비밀번호 검증 성공 - 수정 모달 열기");
       } else if (type == "delete") {
         // 게시글 삭제 API 호출
         // DELETE /api/posts + body {id, password}
@@ -117,6 +157,14 @@ function PostDetail() {
           ? "삭제에 실패했습니다. 비밀번호 확인해주세요."
           : "수정에 실패했습니다.");
     }
+  };
+
+  // 수정 완료 처리 로직
+  const handlePostUpdated = () => {
+    // 화면 새로고침으로 수정된 내용 즉시 반영
+    window.location.reload();
+    // Redux 목록 상태도 새로고침
+    dispatch(bumpRefresh());
   };
 
   // 비밀 번호 모달 닫기
@@ -242,6 +290,15 @@ function PostDetail() {
         confirmText={passwordDialog.type === "delete" ? "삭제" : "수정"}
         loading={passwordDialog.loading}
         error={passwordDialog.error}
+      />
+
+      {/* 게시글 수정 모달 (EditPostDialog) */}
+      <EditPostDialog
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        post={post}
+        verifiedPassword={verifiedPassword}
+        onUpdated={handlePostUpdated}
       />
     </Box>
   );

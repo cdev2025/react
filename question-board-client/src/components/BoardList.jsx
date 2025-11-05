@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ApiService from "../api/ApiService";
 import { Box, Chip, CircularProgress, Stack, Typography } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { selectBoard } from "../store/boardSlice";
 
-function BoardList({ onSelectBoard }) {
+function BoardList() {
+  const dispatch = useDispatch();
+  const { selectedBoardId } = useSelector((state) => state.board);
+
   const [boards, setBoards] = useState([]); // 데이터
   const [loading, setLoading] = useState(true); // 로딩상태
   const [error, setError] = useState(null); // 에러 상태
@@ -24,6 +29,11 @@ function BoardList({ onSelectBoard }) {
 
     fetchBoards();
   }, []); // []비어있는 의존성 배열: 마운트될 때 한 번만 실행
+
+  // 게시판 선택 핸들러 (Redux 액션 디스패치)
+  const handleBoardClick = (id, name) => {
+    dispatch(selectBoard({ id, name }));
+  };
 
   if (loading)
     return (
@@ -50,7 +60,7 @@ function BoardList({ onSelectBoard }) {
             <Chip
               key={board.id}
               label={board.boardName}
-              onClick={() => onSelectBoard(board.id, board.boardName)}
+              onClick={() => handleBoardClick(board.id, board.boardName)}
               color="primary"
               variant="outlined"
               sx={{ cursor: "pointer " }}

@@ -9,9 +9,9 @@ import {
   Alert,
   Typography,
   Box,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
-import { Lock } from '@mui/icons-material';
+import { Lock } from "@mui/icons-material";
 
 /**
  * 비밀번호 입력을 요청하는 재사용 가능한 모달 컴포넌트
@@ -32,7 +32,7 @@ function PasswordDialog({
   message = "작성 시 입력한 비밀번호를 입력하세요.",
   confirmText = "확인",
   loading = false,
-  error = null
+  error = null,
 }) {
   const [password, setPassword] = useState("");
   const [clientError, setClientError] = useState(null);
@@ -85,7 +85,7 @@ function PasswordDialog({
 
   // Enter 키 처리
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !loading) {
+    if (e.key === "Enter" && !loading) {
       handleSubmit(e);
     }
   };
@@ -98,29 +98,43 @@ function PasswordDialog({
       fullWidth
       disableEscapeKeyDown={loading} // 로딩 중 ESC 키 비활성화
     >
-      <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
-        <Lock sx={{ fontSize: 40, color: 'primary.main', mb: 1, display: 'block' }} />
+      <DialogTitle sx={{ textAlign: "center", pb: 1 }}>
+        <Lock
+          sx={{ fontSize: 40, color: "primary.main", mb: 1, display: "block" }}
+        />
         {title}
       </DialogTitle>
 
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ pt: 1 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mb: 2, textAlign: "center" }}
+          >
             {message}
           </Typography>
 
           {/* 클라이언트 에러 표시 */}
-          {clientError && <Alert severity="error" sx={{ mb: 2 }}>{clientError}</Alert>}
+          {clientError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {clientError}
+            </Alert>
+          )}
 
           {/* 서버 에러 표시 */}
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
           <TextField
             type="password"
             label="비밀번호"
             value={password}
             onChange={handlePasswordChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             fullWidth
             autoFocus
             disabled={loading}
